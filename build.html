@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ساخت کتابخانه‌ی باغیار</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--tx:#101211;--mu:#6b726d;--ln:#e7e9e7;--fl:#f3f4f2;--ac:#0E3B2C;--er:#c0392b}
+@media(prefers-color-scheme:dark){:root{--bg:#0b0d0c;--tx:#f1f3f0;--mu:#98a29b;--ln:#232826;--fl:#171b19;--ac:#6fcf9f}}
+*{box-sizing:border-box}
+body{margin:0;font-family:Vazirmatn,system-ui,Tahoma,sans-serif;background:var(--bg);color:var(--tx);line-height:1.8}
+main{max-width:640px;margin:0 auto;padding:28px 16px 80px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:30px 0 8px}
+p{color:var(--mu);font-size:14px;margin:4px 0}
+input,textarea,select{width:100%;font:inherit;color:var(--tx);background:var(--fl);border:0;border-radius:10px;padding:10px 12px;margin:4px 0;outline:0}
+textarea{min-height:64px;resize:vertical}
+select{width:auto;padding:4px 10px;margin:0}
+.k{direction:ltr;text-align:center;letter-spacing:1px}
+.btn{display:block;width:100%;font:inherit;font-weight:700;border:0;border-radius:12px;padding:12px;background:var(--tx);color:var(--bg);text-align:center;cursor:pointer;margin-top:10px}
+.btn.o{background:none;border:1px solid var(--ln);color:var(--tx);font-weight:500}
+.btn:disabled{opacity:.35;cursor:default}
+.card{background:var(--fl);border-radius:16px;padding:14px;margin:12px 0}
+.top{display:flex;gap:12px;align-items:flex-start}
+.th{width:64px;height:64px;border-radius:12px;object-fit:cover;background:var(--ln);flex:none}
+.f{flex:1;min-width:0}.nm{direction:ltr;text-align:start;font-style:italic}
+.meta{font-size:13px;color:var(--mu);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.x{background:none;border:0;color:var(--mu);font-size:22px;cursor:pointer;line-height:1}
+#log{font-size:13px;color:var(--mu);white-space:pre-line;margin-top:10px}
+.bar{height:4px;background:var(--ln);border-radius:2px;overflow:hidden;margin-top:8px;display:none}.bar b{display:block;height:100%;width:0;background:var(--ac)}
+.out{display:flex;align-items:center;gap:10px;background:var(--fl);border-radius:12px;padding:10px 14px;margin:8px 0}.out span{flex:1;direction:ltr;text-align:start}
+.out button{font:inherit;border:1px solid var(--ln);background:none;color:var(--tx);border-radius:10px;padding:4px 14px;cursor:pointer}
+.err{color:var(--er)}
+.two{display:flex;gap:8px}.two>*{flex:1}
+</style>
+</head>
+<body>
+<main>
+<h1>ساخت کتابخانه‌ی باغیار</h1>
+<p>عکس‌های مرجع را به بردار تبدیل می‌کند و فایل‌های <b dir="ltr">lib1.enc</b> تا <b dir="ltr">lib3.enc</b> را می‌سازد. همه‌چیز روی همین دستگاه انجام می‌شود و عکس‌ها جایی آپلود نمی‌شوند.</p>
+
+<h2>۱. کلیدهای دسترسی</h2>
+<p>برای هر سطحی که می‌خواهی بسازی کلید بگذار (حداقل ۶ حرف). برای سطحی که کلید ندارد فایلی ساخته نمی‌شود. کلیدها باید با هم فرق داشته باشند و همان کلیدهای قبلی بمانند.</p>
+<input class="k" id="k1" placeholder="کلید سطح ۱ (کاربر)" autocomplete="off">
+<input class="k" id="k2" placeholder="کلید سطح ۲ (کارشناس)" autocomplete="off">
+<input class="k" id="k3" placeholder="کلید سطح ۳ (مدیر)" autocomplete="off">
+
+<h2>۲. باز کردن lib فعلی (اختیاری)</h2>
+<p>برای اینکه به گونه‌ها و عکس‌های قبلی چیزی اضافه شود، فایل‌های <b dir="ltr">.enc</b> فعلی را همراه کلیدشان باز کن. بدون این مرحله از صفر ساخته می‌شود.</p>
+<label class="btn o">انتخاب فایل‌های lib فعلی<input type="file" id="fImp" accept=".enc" multiple hidden></label>
+
+<h2>۳. گونه‌ها و عکس‌ها</h2>
+<p>نام علمی را دقیق بنویس (مثلاً <span dir="ltr">Icerya purchasi</span>) تا با آفت‌های داخل اپ یکی شود. گونه‌ی ناشناس به‌عنوان آفت جدید با همان نام اضافه می‌شود.</p>
+<datalist id="dl"><option value="Icerya purchasi"><option value="Chrysomphalus dictyospermi"><option value="Lepidosaphes beckii"><option value="Coccus hesperidum"><option value="Ceroplastes sinensis"></datalist>
+<div id="list"></div>
+<button class="btn o" id="addSp">+ گونه‌ی جدید</button>
+
+<h2>۴. ساخت فایل‌ها</h2>
+<button class="btn" id="build">ساخت فایل‌ها</button>
+<div class="bar" id="bar"><b></b></div>
+<div id="log"></div>
+<div id="out"></div>
+</main>
+
+<script>
+const $=s=>document.querySelector(s);
+const DIM=512;
+/* ---- keep this block identical in app.html ---- */
+const CDN='https://cdn.jsdelivr.net/npm/@huggingface/transformers@3/+esm',MODEL='Xenova/clip-vit-base-patch32';
+let _clip=null;
+const clipLoad=onp=>_clip||(_clip=(async()=>{let st='AI library (cdn.jsdelivr.net)';
+ try{const T=await import(CDN);T.env.allowLocalModels=true;T.env.localModelPath='models/';
+  st='model settings (huggingface.co)';const proc=await T.AutoProcessor.from_pretrained(MODEL);
+  st='model file, about 90 MB (huggingface.co)';const model=await T.CLIPVisionModelWithProjection.from_pretrained(MODEL,{dtype:'q8',progress_callback:onp});
+  return{T,proc,model}}catch(e){throw new Error('failed at '+st+': '+(e&&e.message||e))}})().catch(e=>{_clip=null;throw e}));
+async function embed(blob,onp){const{T,proc,model}=await clipLoad(onp);
+ const img=await T.RawImage.fromBlob(blob),inp=await proc(img),out=await model(inp);
+ const d=Float32Array.from(out.image_embeds.data);let n=0;for(const v of d)n+=v*v;n=Math.sqrt(n)||1;return d.map(v=>v/n)}
+const keyFrom=async(pw,salt)=>{const m=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);
+ return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:200000,hash:'SHA-256'},m,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])};
+async function dec(buf,pw){buf=new Uint8Array(buf);const k=await keyFrom(pw,buf.slice(0,16));
+ const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:buf.slice(16,28)},k,buf.slice(28));return JSON.parse(new TextDecoder().decode(pt))}
+/* ---- end shared block ---- */
+
+/*TEST-BEGIN*/
+async function enc(obj,pw){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+ const k=await keyFrom(pw,salt),ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},k,new TextEncoder().encode(JSON.stringify(obj))));
+ const out=new Uint8Array(28+ct.length);out.set(salt,0);out.set(iv,16);out.set(ct,28);return out}
+const quant=v=>{const q=new Int8Array(v.length);for(let i=0;i<v.length;i++)q[i]=Math.max(-127,Math.min(127,Math.round(v[i]*127)));return q};
+const toB64=q=>{const u=new Uint8Array(q.buffer,q.byteOffset,q.byteLength);let s='';for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return btoa(s)};
+const fromB64=x=>{const b=atob(x),a=new Int8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a};
+const same=(a,b)=>a.toLowerCase().trim()===b.toLowerCase().trim();
+function buildPayload(S,L){const list=S.filter(s=>s.level<=L&&s.n>0);
+ return{v:1,dim:DIM,updated:new Date().toISOString().slice(0,10),species:list.map(s=>({name:s.name.trim(),n:s.n,e:toB64(s.e),th:s.th||'',info:s.info||''}))}}
+/*TEST-END*/
+
+/* ---------- state ---------- */
+let S=[],busy=false,OUT={};
+const esc=v=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const log=(m,bad)=>{const e=$('#log');e.innerHTML=(bad?'<span class="err">':'<span>')+esc(m)+'</span>'};
+const prog=p=>{const b=$('#bar');b.style.display=p==null?'none':'block';if(p!=null)b.firstElementChild.style.width=Math.round(p)+'%'};
+const mp=p=>{if(p&&p.status==='progress'&&p.progress!=null){log('در حال بارگذاری مدل هوش مصنوعی… '+Math.round(p.progress)+'٪');prog(p.progress)}};
+
+function thumb(f){return new Promise(r=>{const u=URL.createObjectURL(f),im=new Image();
+ im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=256;const s=Math.min(im.width,im.height);
+  c.getContext('2d').drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,256,256);URL.revokeObjectURL(u);r(c.toDataURL('image/jpeg',.75))};
+ im.onerror=()=>{URL.revokeObjectURL(u);r('')};im.src=u})}
+
+function render(){$('#list').innerHTML=S.map((s,i)=>`<div class="card" data-i="${i}">
+<div class="top">${s.th?`<img class="th" src="${s.th}" alt="">`:'<div class="th"></div>'}
+<div class="f"><input class="nm" list="dl" value="${esc(s.name)}" placeholder="Scientific name" autocomplete="off">
+<div class="meta"><span>${s.n} عکس</span><span>این گونه را ببیند از سطح <select class="lv">${[1,2,3].map(l=>`<option value="${l}"${s.level===l?' selected':''}>${l}</option>`).join('')}</select></span></div></div>
+<button class="x" data-rm aria-label="حذف">×</button></div>
+<textarea class="inf" placeholder="یادداشت برای این گونه (اختیاری، برای کاربران وارد‌شده نشان داده می‌شود)">${esc(s.info||'')}</textarea>
+<label class="btn o">افزودن عکس<input type="file" class="ph" accept="image/*" multiple hidden></label></div>`).join('')||'<p>هنوز گونه‌ای نیست.</p>'}
+
+function addSpecies(name=''){S.push({name,level:1,info:'',th:'',n:0,e:new Int8Array(0)});render()}
+$('#addSp').onclick=()=>addSpecies();
+
+$('#list').addEventListener('input',e=>{const c=e.target.closest('.card');if(!c)return;const s=S[+c.dataset.i];
+ if(e.target.classList.contains('nm'))s.name=e.target.value;if(e.target.classList.contains('inf'))s.info=e.target.value});
+$('#list').addEventListener('change',async e=>{const c=e.target.closest('.card');if(!c)return;const s=S[+c.dataset.i];
+ if(e.target.classList.contains('lv'))s.level=+e.target.value;
+ if(e.target.classList.contains('ph')){const fs=[...e.target.files];e.target.value='';await addPhotos(s,fs)}});
+$('#list').addEventListener('click',e=>{if(!e.target.closest('[data-rm]'))return;const i=+e.target.closest('.card').dataset.i;
+ if(confirm('این گونه با همه‌ی عکس‌هایش حذف شود؟')){S.splice(i,1);render()}});
+
+async function addPhotos(s,fs){if(busy||!fs.length)return;busy=true;let ok=0;
+ try{for(let k=0;k<fs.length;k++){log(`در حال پردازش عکس ${k+1} از ${fs.length}…`);prog(null);
+   const q=quant(await embed(fs[k],mp)),ne=new Int8Array(s.e.length+DIM);ne.set(s.e);ne.set(q,s.e.length);s.e=ne;s.n++;ok++;
+   if(!s.th)s.th=await thumb(fs[k])}
+  log(`${ok} عکس اضافه شد.`);prog(null)}
+ catch(e){console.error(e);log('خطا: '+(e&&e.message||e)+'\nاگر این صفحه را از روی فایل باز کرده‌ای، آن را با یک سرور محلی یا آدرس GitHub Pages باز کن.',1);prog(null)}
+ busy=false;render()}
+
+/* ---------- import existing libs ---------- */
+$('#fImp').onchange=async e=>{const fs=[...e.target.files];e.target.value='';if(busy||!fs.length)return;
+ const keys={1:$('#k1').value.trim(),2:$('#k2').value.trim(),3:$('#k3').value.trim()};
+ if(!keys[1]&&!keys[2]&&!keys[3])return log('اول کلید(های) این فایل‌ها را در بخش ۱ وارد کن.',1);
+ busy=true;let done=0,fail=[];
+ try{for(const f of fs){const buf=await f.arrayBuffer();let o=null,lv=0;
+   for(const L of [3,2,1]){if(!keys[L])continue;log(`در حال باز کردن ${f.name}…`);try{o=await dec(buf,keys[L]);lv=L;break}catch(_){}}
+   if(!o){fail.push(f.name);continue}
+   for(const x of o.species){const q=fromB64(x.e);let s=S.find(z=>same(z.name,x.name));
+    if(s){s.level=Math.min(s.level,lv);if(!s.info&&x.info)s.info=x.info;if(!s.th&&x.th)s.th=x.th}
+    else S.push({name:x.name,level:lv,info:x.info||'',th:x.th||'',n:x.n,e:q})}
+   done++}
+  log(`${done} فایل باز شد.`+(fail.length?`\nباز نشد (کلید اشتباه؟): ${fail.join('، ')}`:''),fail.length&&!done)}
+ catch(err){console.error(err);log('خطا: '+(err&&err.message||err),1)}
+ busy=false;render()};
+
+/* ---------- build ---------- */
+$('#build').onclick=async()=>{if(busy)return;
+ const keys={1:$('#k1').value.trim(),2:$('#k2').value.trim(),3:$('#k3').value.trim()},ls=[1,2,3].filter(L=>keys[L]);
+ if(!ls.length)return log('حداقل یک کلید وارد کن.',1);
+ if(ls.some(L=>keys[L].length<6))return log('کلیدها باید حداقل ۶ حرف باشند.',1);
+ if(new Set(ls.map(L=>keys[L])).size<ls.length)return log('کلید دو سطح نباید یکی باشد.',1);
+ const names=S.map(s=>s.name.trim().toLowerCase());
+ if(!S.length||S.every(s=>!s.n))return log('هیچ عکسی اضافه نشده است.',1);
+ if(S.some(s=>!s.name.trim()))return log('همه‌ی گونه‌ها باید نام داشته باشند.',1);
+ if(new Set(names).size<names.length)return log('دو گونه نام یکسان دارند.',1);
+ const empty=S.filter(s=>!s.n).map(s=>s.name);
+ busy=true;OUT={};$('#out').innerHTML='';let msg=empty.length?`این گونه‌ها عکس ندارند و در فایل‌ها نمی‌آیند: ${empty.join('، ')}\n`:'';
+ try{for(const L of ls){log(msg+`در حال ساخت lib${L}.enc …`);prog(null);
+   const p=buildPayload(S,L);if(!p.species.length){msg+=`سطح ${L}: گونه‌ای برایش نیست؛ ساخته نشد.\n`;continue}
+   const bytes=await enc(p,keys[L]),chk=await dec(bytes,keys[L]);
+   if(chk.species.length!==p.species.length)throw new Error('تأیید فایل شکست خورد');
+   OUT[L]={bytes,n:p.species.length}}
+  log(msg+'ساخته شد. فایل‌ها را داخل پوشه‌ی lib ریپو جایگزین کن.');
+  $('#out').innerHTML=Object.keys(OUT).map(L=>`<div class="out"><span>lib${L}.enc · ${(OUT[L].bytes.length/1024).toFixed(0)} KB · ${OUT[L].n} species ✓</span><button data-dl="${L}">دانلود</button></div>`).join('')+
+   (Object.keys(OUT).length?`<div class="two"><button class="btn" id="dlAll">دانلود همه</button>${window.showDirectoryPicker?'<button class="btn o" id="toDir">ذخیره در پوشه‌ی lib</button>':''}</div>`:'')}
+ catch(err){console.error(err);log('خطا: '+(err&&err.message||err),1)}
+ busy=false};
+
+const save=(name,bytes)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([bytes],{type:'application/octet-stream'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)};
+$('#out').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.dl)save(`lib${b.dataset.dl}.enc`,OUT[b.dataset.dl].bytes);
+ if(b.id==='dlAll')for(const L of Object.keys(OUT)){save(`lib${L}.enc`,OUT[L].bytes);await new Promise(r=>setTimeout(r,400))}
+ if(b.id==='toDir'){try{const d=await showDirectoryPicker({mode:'readwrite'});
+   for(const L of Object.keys(OUT)){const w=await(await d.getFileHandle(`lib${L}.enc`,{create:true})).createWritable();await w.write(OUT[L].bytes);await w.close()}
+   log('فایل‌ها در پوشه‌ی انتخاب‌شده ذخیره شد.')}catch(err){if(err.name!=='AbortError')log('ذخیره نشد: '+err.message,1)}}});
+
+render();
+</script>
+</body>
+</html>
